@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-serif-display {
+    font-family: 'Instrument Serif', Georgia, serif;
+  }
+  .font-space {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+  .font-syne {
+    font-family: 'Syne', sans-serif;
+  }
+  .font-sans-ui {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  .font-mono-tech {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090909;
+}
+::-webkit-scrollbar-thumb {
+  background: #222222;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333333;
+}
+
+/* Subtle Animated Grain / Grid Line Effects */
+.scanline-bg {
+  background-linear-gradient: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.3)
+  );
+  background-size: 100% 4px;
+}
+
+.architectural-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(241, 238, 231, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(241, 238, 231, 0.03) 1px, transparent 1px);
+}
+
+.architectural-grid-dense {
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(200, 255, 61, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(200, 255, 61, 0.04) 1px, transparent 1px);
+}
+
+/* Hide scrollbars for clean horizontal slider when needed */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Text stroke utilities */
+.text-stroke-subtle {
+  -webkit-text-stroke: 1px rgba(241, 238, 231, 0.25);
+  color: transparent;
+}
+.text-stroke-lime {
+  -webkit-text-stroke: 1.5px #C8FF3D;
+  color: transparent;
+}
+
+.ambient-glow {
+  opacity: 0.4;
+  transition: opacity 0.5s ease-in-out;
+}
+
+@keyframes scanVertical {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+.animate-scan-line {
+  animation: scanVertical 12s linear infinite;
+}
+

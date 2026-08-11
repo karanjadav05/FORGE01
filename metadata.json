@@ -1,0 +1,6 @@
+{
+  "name": "FORGE / 01",
+  "description": "Private Performance Club - Discipline Has A Design.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
