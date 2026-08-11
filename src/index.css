@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.will-change-transform {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
 @layer utilities {
   .font-serif-display {
     font-family: 'Instrument Serif', Georgia, serif;

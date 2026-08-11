@@ -19,28 +19,44 @@ export default function Navbar({ onOpenJoinModal, isAudioPlaying, toggleAudio })
   ];
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-
-      // Simple active section calculation
-      const sections = ['hero', 'philosophy', 'lab', 'human-machine', 'system', 'facility', 'ritual', 'membership', 'testimonials'];
-      const scrollPos = window.scrollY + 200;
-
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(section);
-            break;
-          }
-        }
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 30);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Use IntersectionObserver for active section tracking without layout thrashing
+    const sectionIds = ['hero', 'philosophy', 'lab', 'human-machine', 'system', 'facility', 'ritual', 'membership', 'testimonials'];
+    const observerOptions = {
+      root: null,
+      rootMargin: '-15% 0px -50% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, observerOptions);
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   const handleNavClick = (e, href) => {

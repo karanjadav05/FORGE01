@@ -82,8 +82,8 @@ export default function App() {
       <div className="fixed top-0 left-0 right-0 h-[2px] bg-[#222222] z-50 pointer-events-none">
         <div
           id="scrollProgress"
-          className="h-full bg-[#C8FF3D] transition-all duration-150"
-          style={{ width: '0%' }}
+          className="h-full bg-[#C8FF3D] origin-left will-change-transform"
+          style={{ transform: 'scaleX(0)' }}
         />
       </div>
 
@@ -120,14 +120,25 @@ export default function App() {
   );
 }
 
-// Global scroll listener for top progress bar
+// Global scroll listener for top progress bar using transform: scaleX on GPU
 if (typeof window !== 'undefined') {
-  window.addEventListener('scroll', () => {
-    const bar = document.getElementById('scrollProgress');
-    if (bar) {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
-      bar.style.width = `${progress}%`;
-    }
-  });
+  let ticking = false;
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const bar = document.getElementById('scrollProgress');
+          if (bar) {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = totalHeight > 0 ? window.scrollY / totalHeight : 0;
+            bar.style.transform = `scaleX(${progress})`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
 }

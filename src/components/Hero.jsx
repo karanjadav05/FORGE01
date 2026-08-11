@@ -17,31 +17,47 @@ export default function Hero({ onOpenJoinModal }) {
   const textY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
-  // Floating ambient dust particles in canvas
+  // Floating ambient dust particles in canvas (paused when out of viewport)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
+    let isIntersecting = true;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isIntersecting = entry.isIntersecting;
+      if (isIntersecting && !animationFrameId) {
+        render();
+      }
+    }, { threshold: 0 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     setCanvasSize();
-    window.addEventListener('resize', setCanvasSize);
+    window.addEventListener('resize', setCanvasSize, { passive: true });
 
-    // Create 45 ambient dust particles
-    const particles = Array.from({ length: 45 }, () => ({
+    // Create 35 ambient dust particles for lightweight rendering
+    const particles = Array.from({ length: 35 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       radius: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.5 + 0.1,
+      alpha: Math.random() * 0.4 + 0.1,
       speedX: (Math.random() - 0.5) * 0.3,
       speedY: -Math.random() * 0.4 - 0.1,
     }));
 
     const render = () => {
+      if (!isIntersecting) {
+        animationFrameId = null;
+        return;
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach((p) => {
         p.x += p.speedX;
@@ -63,7 +79,8 @@ export default function Hero({ onOpenJoinModal }) {
 
     return () => {
       window.removeEventListener('resize', setCanvasSize);
-      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
@@ -76,12 +93,12 @@ export default function Hero({ onOpenJoinModal }) {
       {/* Background Architectural Training Environment Image with Parallax */}
       <motion.div
         style={{ y: bgY, scale: bgScale }}
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none will-change-transform"
       >
         <img
           src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=2000"
           alt="FORGE 01 Dark Architectural Gym Environment"
-          className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.25] saturate-[0.8]"
+          className="w-full h-full object-cover object-center opacity-40"
           referrerPolicy="no-referrer"
         />
         {/* Gradients and Haze Overlays */}
